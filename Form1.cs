@@ -8,9 +8,11 @@ using System.Reflection;
 using System.Windows.Forms;
 
 namespace Spots {
-    
+
     public partial class Form1 : Form {
         public Form2 form2;
+        public Form3 form3;
+        public Form4 form4;
         private Timer gameTimer;
         private int timeLeft;
         private int elapsedTimeInSeconds;
@@ -24,6 +26,7 @@ namespace Spots {
         private List<Bitmap> backgrounds;
         private int currentBackground = 0;
         private Timer restartTimer;
+        private Timer restartTimer1;
         private AudioFileReader audioFileReader1;
         private IWavePlayer iWavePlayer1;
         private AudioFileReader audioFileReader2;
@@ -38,13 +41,22 @@ namespace Spots {
         private IWavePlayer iWavePlayer6;
         private AudioFileReader audioFileReader7;
         private IWavePlayer iWavePlayer7;
+        private AudioFileReader audioFileReader8;
+        private IWavePlayer iWavePlayer8;
+        private AudioFileReader audioFileReader9;
+        private IWavePlayer iWavePlayer9;
+        private AudioFileReader audioFileReader10;
+        private IWavePlayer iWavePlayer10;
         private bool isMuted = false;
         private bool isPaused = false;
         private bool isGameOver = false;
+        public bool isFormVisible = false;
 
         public Form1() {
             InitializeComponent();
             form2 = new Form2();
+            form3 = new Form3();
+            form4 = new Form4();
             panel1.Visible = false;
             label1.Visible = false;
             button2.Visible = false;
@@ -60,12 +72,10 @@ namespace Spots {
             iWavePlayer1 = new WaveOut();
             audioFileReader1 = new AudioFileReader("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\playing.mp3");
             iWavePlayer1.Init(audioFileReader1);
-            audioFileReader1.Position = 0;
-            iWavePlayer1.Play();
-            iWavePlayer1.PlaybackStopped += OnPlaybackStopped;
-            restartTimer = new Timer();
-            restartTimer.Interval = 3000;
-            restartTimer.Tick += RestartTimer_Tick;
+            iWavePlayer1.PlaybackStopped += OnPlaybackStopped1;
+            restartTimer1 = new Timer();
+            restartTimer1.Interval = 3000;
+            restartTimer1.Tick += RestartTimer_Tick1;
             iWavePlayer2 = new WaveOut();
             audioFileReader2 = new AudioFileReader("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\click.mp3");
             iWavePlayer2.Init(audioFileReader2);
@@ -84,6 +94,21 @@ namespace Spots {
             iWavePlayer7 = new WaveOut();
             audioFileReader7 = new AudioFileReader("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\winner.mp3");
             iWavePlayer7.Init(audioFileReader7);
+            iWavePlayer8 = new WaveOut();
+            audioFileReader8 = new AudioFileReader("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\start.mp3");
+            iWavePlayer8.Init(audioFileReader8);
+            audioFileReader8.Position = 0;
+            iWavePlayer8.Play();
+            iWavePlayer8.PlaybackStopped += OnPlaybackStopped;
+            restartTimer = new Timer();
+            restartTimer.Interval = 3000;
+            restartTimer.Tick += RestartTimer_Tick;
+            iWavePlayer9 = new WaveOut();
+            audioFileReader9 = new AudioFileReader("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\pause.mp3");
+            iWavePlayer9.Init(audioFileReader9);
+            iWavePlayer10 = new WaveOut();
+            audioFileReader10 = new AudioFileReader("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\unpause.mp3");
+            iWavePlayer10.Init(audioFileReader10);
             InitializeNumbers();
             UpdateTileSize();
             panel1.GetType().GetProperty("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(panel1, true, null);
@@ -98,24 +123,45 @@ namespace Spots {
             }
         }
 
+        private void OnPlaybackStopped1(object sender, StoppedEventArgs e) {
+            if (!isGameOver && !isMuted) {
+                restartTimer1.Start();
+            }
+        }
+
         private void RestartTimer_Tick(object sender, EventArgs e) {
             restartTimer.Stop();
+            audioFileReader8.Position = 0;
+            iWavePlayer8.Play();
+        }
+
+        private void RestartTimer_Tick1(object sender, EventArgs e) {
+            restartTimer1.Stop();
             audioFileReader1.Position = 0;
             iWavePlayer1.Play();
         }
 
         private void pictureBox1_Click(object sender, EventArgs e) {
+            audioFileReader3.Position = 0;
+            iWavePlayer3.Play();
+            audioFileReader8.Position = 0;
+            iWavePlayer8.Play();
+
+            if (!isMuted) {
+                iWavePlayer1.Pause();
+            }
+
             if (!isPaused) {
                 pictureBox5.Image = Image.FromFile("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\stop.png");   
             } else {
                 pictureBox5.Image = Image.FromFile("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\continue.png");  
             }
 
-            if (!isMuted) {
-                audioFileReader3.Position = 0;
-                iWavePlayer3.Play();
+            if (timeLeft < 60) {
+                audioFileReader4.Position = 0;
+                iWavePlayer4.Stop();
             }
-            iWavePlayer4.Stop();
+
             gameTimer.Stop();
             panel1.Visible = false;
             panel1.Enabled = true;
@@ -126,26 +172,32 @@ namespace Spots {
             pictureBox2.Visible = false;
             pictureBox3.Visible = false;
             pictureBox4.Visible = false;
+            pictureBox4.Enabled = true;
             pictureBox5.Visible = false;
             pictureBox6.Visible = true;
             pictureBox7.Visible = false;
             button1.Visible = true;
             button2.Visible = false;
             isGameOver = false;
-
-            if (!isMuted) {
-                iWavePlayer1.Play();
-            }
             isPaused = false;
             pictureBox5.Image = Image.FromFile("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\stop.png");
         }
 
         private void pictureBox2_Click(object sender, EventArgs e) {
+            if (!isMuted) {
+                audioFileReader1.Position = 0;
+                iWavePlayer1.Play();
+            }
+          
+            audioFileReader3.Position = 0;
+            iWavePlayer3.Play();
+            
             if (!isPaused) {
                 pictureBox5.Image = Image.FromFile("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\stop.png");
             } else {
                 pictureBox5.Image = Image.FromFile("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\continue.png");
             }
+            
             elapsedTimeInSeconds = 0;
             gameFinished = false;
             gameTimer.Start();
@@ -153,20 +205,12 @@ namespace Spots {
             label1.Text = label1.ForeColor.ToArgb().ToString();
             button2.Visible = false;
             pictureBox5.Visible = true;
+            pictureBox4.Enabled = true;
             StartGame();
             InitializeNumbers();
             panel1.Enabled = true;
             panel1.Invalidate();
             isGameOver = false;
-
-            if (!isMuted) { 
-                iWavePlayer1.Play();
-            }
-
-            if (!isMuted) {
-                audioFileReader3.Position = 0;
-                iWavePlayer3.Play();
-            }
             audioFileReader4.Position = 0;
             iWavePlayer4.Stop();
             isPaused = false;
@@ -174,22 +218,43 @@ namespace Spots {
         }
 
         private void pictureBox3_Click(object sender, EventArgs e) {
-            if (!isMuted) {
-                audioFileReader3.Position = 0;
-                iWavePlayer3.Play();
+            isFormVisible = !isFormVisible;
+            audioFileReader3.Position = 0;
+            iWavePlayer3.Play();
+
+            if (isFormVisible) {
+                iWavePlayer1.Pause();
+                gameTimer.Stop();
+                pictureBox5.Image = Image.FromFile("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\continue.png");
+                form4.ShowDialog();
             }
+            
+            gameTimer.Start();
+
+            if(!isMuted) {
+                iWavePlayer1.Play();
+            }
+            
+            pictureBox5.Image = Image.FromFile("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\stop.png");
+            isFormVisible = false;
         }
 
         private void pictureBox4_Click(object sender, EventArgs e) {
-            if (!isMuted) {
-                audioFileReader3.Position = 0;
-                iWavePlayer3.Play();
-            }
+            audioFileReader3.Position = 0;
+            iWavePlayer3.Play();
             currentBackground = (currentBackground + 1) % backgrounds.Count;
             panel1.BackgroundImage = backgrounds[currentBackground];
         }
 
-        private void pictureBox5_Click(object sender, EventArgs e) {
+        public void pictureBox5_Click(object sender, EventArgs e) {
+            if (!isPaused) {
+                audioFileReader9.Position = 0;
+                iWavePlayer9.Play();
+            } else {
+                audioFileReader10.Position = 0;
+                iWavePlayer10.Play();
+            }
+
             isPaused = !isPaused;
 
             if (isPaused) {
@@ -200,24 +265,29 @@ namespace Spots {
                 iWavePlayer4.Stop();
             } else {
                 if (!isMuted) {
-                    iWavePlayer1.Play();
+                    iWavePlayer1.Play();            
                 }
+                
                 pictureBox5.Image = Image.FromFile("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\stop.png");
                 panel1.Enabled = true;
                 gameTimer.Start();
-            }
 
-            if (!isMuted) {
-                audioFileReader3.Position = 0;
-                iWavePlayer3.Play();
+                if (timeLeft < 60) {
+                    iWavePlayer4.Play();
+                }
             }
         }
 
         private void button1_Click(object sender, EventArgs e) {
+            iWavePlayer8.Pause();
+
             if (!isMuted) {
-                audioFileReader2.Position = 0;
-                iWavePlayer2.Play();
+                audioFileReader1.Position = 0;
+                iWavePlayer1.Play();
             }
+
+            audioFileReader2.Position = 0;
+            iWavePlayer2.Play();
             panel1.Visible = true;
             label1.Visible = true;
             pictureBox1.Visible = true;
@@ -234,7 +304,9 @@ namespace Spots {
         }
 
         private void pictureBox6_Click(object sender, EventArgs e) {
-            Close();
+            audioFileReader3.Position = 0;
+            iWavePlayer3.Play();
+            form3.ShowDialog();
         }
 
         private void pictureBox7_Click(object sender, EventArgs e) {
@@ -246,9 +318,9 @@ namespace Spots {
             } else {
                 pictureBox7.Image = Image.FromFile("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\unmute.png");
                 
-                if ( !isPaused && !isGameOver) {
+                if (!isPaused && !isGameOver) {
                     iWavePlayer1.Play();
-                } 
+                }
             }
         }
 
@@ -277,10 +349,7 @@ namespace Spots {
         }
 
         private void CenterPanel() {
-            panel1.Location = new Point(
-                (this.ClientSize.Width - panel1.Width) / 2,
-                (this.ClientSize.Height - panel1.Height) / 2
-            );
+            panel1.Location = new Point((this.ClientSize.Width - panel1.Width) / 2, (this.ClientSize.Height - panel1.Height) / 2);
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e) {
@@ -289,6 +358,7 @@ namespace Spots {
 
             for (int i = 0; i < numbers.Count; i++) {
                 int number = numbers[i];
+                
                 if (number != 0 && !(isDragging && i == draggingIndex)) {
                     DrawTile(g, font, i, number);
                 }
@@ -325,8 +395,7 @@ namespace Spots {
                     g.DrawLine(crossPen, x + circleSize + padding, y + padding, x + padding, y + circleSize + padding);
                 }
             } else {
-                using (Brush hoverBrush = new SolidBrush(hoverColor))
-                {
+                using (Brush hoverBrush = new SolidBrush(hoverColor)) {
                     g.FillEllipse(hoverBrush, tileCircle);
                 }
             }
@@ -375,27 +444,39 @@ namespace Spots {
 
         private void panel1_MouseMove(object sender, MouseEventArgs e) {
             if (isDragging) {
-                dragPoint = new Point(
-                    Math.Max(0, Math.Min(e.Location.X, panel1.Width)),
-                    Math.Max(0, Math.Min(e.Location.Y, panel1.Height))
-                );
+                dragPoint = new Point(Math.Max(0, Math.Min(e.Location.X, panel1.Width)), Math.Max(0, Math.Min(e.Location.Y, panel1.Height)));
                 panel1.Invalidate();
             }
         }
+
+      
 
         private void panel1_MouseUp(object sender, MouseEventArgs e) {
             if (isDragging) {
                 isDragging = false;
 
                 if (!panel1.ClientRectangle.Contains(e.Location)) {
-                    audioFileReader5.Position = 0;
-                    iWavePlayer5.Play();
-                    gameTimer.Stop();
-                    form2.ShowDialog();
+                    isFormVisible = !isFormVisible;
+
+                    if (!isFormVisible) { 
+                        audioFileReader5.Position = 0;
+                        iWavePlayer5.Play();
+                        gameTimer.Stop();
+                        iWavePlayer1.Pause();
+                        pictureBox5.Image = Image.FromFile("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\continue.png");
+                        form2.ShowDialog();
+                    } 
+
+                    if (!isMuted) {
+                        iWavePlayer1.Play();
+                    }
+                    
+                    pictureBox5.Image = Image.FromFile("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\stop.png");
 
                     if (!gameFinished) {
                         gameTimer.Start();
                     }
+                    
                     draggingIndex = -1;
                     panel1.Invalidate();
                     return;
@@ -405,6 +486,7 @@ namespace Spots {
                 
                 if (CanMoveTo(draggingIndex, targetIndex)) {
                     SwapTiles(draggingIndex, targetIndex);
+                    
                     if (CheckPuzzleSolved()) {
                         ShowResultMessage(true);
                     }
@@ -429,8 +511,7 @@ namespace Spots {
         private bool IsMovable(int index) {
             int emptyIndex = numbers.IndexOf(0);
             
-            if ((index == emptyIndex - 1 && emptyIndex % 4 != 0) ||
-                (index == emptyIndex + 1 && index % 4 != 0)) {
+            if ((index == emptyIndex - 1 && emptyIndex % 4 != 0) || (index == emptyIndex + 1 && index % 4 != 0)) {
                 return true;
             }
             return index == emptyIndex - 4 || index == emptyIndex + 4;
@@ -475,7 +556,7 @@ namespace Spots {
                 timeLeft--;
                 UpdateTimeLabel();
 
-                if (timeLeft < 60 ) {
+                if (timeLeft < 60) {
                     label1.ForeColor = Color.Red;
                     iWavePlayer4.Play();
                 }
@@ -509,7 +590,7 @@ namespace Spots {
                 audioFileReader7.Position = 0;
                 iWavePlayer7.Play();
                 iWavePlayer4.Stop();
-                button2.Text = "SUCCESSFUL";
+                button2.Text = "ВИ ВИГРАЛИ!";
                 button2.ForeColor = Color.Green;
                 button2.BackColor = Color.White;
                 button2.FlatAppearance.BorderColor = Color.Green;
@@ -518,12 +599,13 @@ namespace Spots {
                 button2.Visible = true;
                 panel1.Enabled = false;
                 pictureBox5.Visible = false;
-            } else  {
+                pictureBox4.Enabled = false;
+            } else {
                 iWavePlayer1.Stop();
                 audioFileReader6.Position = 0;
                 iWavePlayer6.Play();
                 iWavePlayer4.Stop();
-                button2.Text = "GAME OVER";
+                button2.Text = "ВИ ПРОГРАЛИ!";
                 button2.ForeColor = Color.Red;
                 button2.BackColor = Color.Black;
                 button2.FlatAppearance.BorderColor = Color.Red;
@@ -532,8 +614,10 @@ namespace Spots {
                 button2.Visible = true;
                 panel1.Enabled = false;
                 pictureBox5.Visible = false;
+                pictureBox4.Enabled = false;
             }
             restartTimer.Stop();
+            restartTimer1.Stop();
         }
 
         private void UpdatePanelSize() {
