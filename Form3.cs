@@ -9,6 +9,16 @@ namespace Spots {
             InitializeComponent();
         }
 
+        protected override void OnLoad(EventArgs e) {
+            base.OnLoad(e);
+            this.ActiveControl = null;
+        }
+
+        protected override void OnClick(EventArgs e) {
+            base.OnClick(e);
+            this.ActiveControl = null;
+        }
+
         private void button1_Click(object sender, EventArgs e) {
             Application.Exit();
         }

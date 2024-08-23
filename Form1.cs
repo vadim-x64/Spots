@@ -57,6 +57,7 @@ namespace Spots {
             form2 = new Form2();
             form3 = new Form3();
             form4 = new Form4();
+            form4.FormClosed += new FormClosedEventHandler(Form4_FormClosed);
             panel1.Visible = false;
             label1.Visible = false;
             button2.Visible = false;
@@ -227,15 +228,19 @@ namespace Spots {
                 gameTimer.Stop();
                 pictureBox5.Image = Image.FromFile("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\continue.png");
                 form4.ShowDialog();
-            }
-            
-            gameTimer.Start();
+            } 
+        }
 
-            if(!isMuted) {
-                iWavePlayer1.Play();
+        private void Form4_FormClosed(object sender, FormClosedEventArgs e) {
+            if (!isPaused) {
+                isPaused = false;
+                gameTimer.Start();
+
+                if (!isMuted) {
+                    iWavePlayer1.Play();
+                }
+                pictureBox5.Image = Image.FromFile("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\stop.png");
             }
-            
-            pictureBox5.Image = Image.FromFile("C:\\Documents\\study\\c#\\Spots\\bin\\Debug\\stop.png");
             isFormVisible = false;
         }
 
@@ -280,6 +285,7 @@ namespace Spots {
 
         private void button1_Click(object sender, EventArgs e) {
             iWavePlayer8.Pause();
+            audioFileReader8.Position = 0;
 
             if (!isMuted) {
                 audioFileReader1.Position = 0;
@@ -448,8 +454,6 @@ namespace Spots {
                 panel1.Invalidate();
             }
         }
-
-      
 
         private void panel1_MouseUp(object sender, MouseEventArgs e) {
             if (isDragging) {
