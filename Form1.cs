@@ -174,6 +174,7 @@ namespace Spots {
             pictureBox3.Visible = false;
             pictureBox4.Visible = false;
             pictureBox4.Enabled = true;
+            pictureBox3.Enabled = true;
             pictureBox5.Visible = false;
             pictureBox6.Visible = true;
             pictureBox7.Visible = false;
@@ -604,6 +605,7 @@ namespace Spots {
                 panel1.Enabled = false;
                 pictureBox5.Visible = false;
                 pictureBox4.Enabled = false;
+                pictureBox3.Enabled = false;
             } else {
                 iWavePlayer1.Stop();
                 audioFileReader6.Position = 0;
@@ -619,6 +621,7 @@ namespace Spots {
                 panel1.Enabled = false;
                 pictureBox5.Visible = false;
                 pictureBox4.Enabled = false;
+                pictureBox3.Enabled = false;
             }
             restartTimer.Stop();
             restartTimer1.Stop();
